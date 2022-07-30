@@ -1,0 +1,352 @@
+---
+title: "Clase 10.5. Aplicacion ARIMA(p, d, q) y ARMA(p, q) V2"
+author: "Benjamin Oliva & Omar Alfaro-Rivera"
+date: "02/10/2021"
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+### Dependencies and Setup
+```{r setup, include = FALSE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#install.packages("ggplot2")
+#install.packages("dplyr")
+#install.packages("readxl")
+#install.packages(stats)
+#install.packages("forecast")
+#install.packages("lubridate")
+# 
+library(ggplot2)
+library(dplyr)
+library(readxl)
+library(stats)
+library(forecast)
+library(lubridate)
+
+```
+
+# Importamos Datos:
+
+Los datos importados son:
+
+* Pax_Nal: Pasajeros (Salidas) en vuelos nacionales
+* Pax_Int: Pasajeros (Salidas) en vuelos internacionales 
+* Vue_Nal: Vuelos u operaciones (Salidas) en vuelos nacionales
+* Vue_Int: Vuelos u operaciones (Salidas) en vuelos internacionales
+* Pax_Metro: Pasajeros transportados (Millones) en el SCM
+* D_Sep2017: Dummy que toma el valor de 1 en septiembre de 2017
+* D_Oct2017: Dummy que toma el valor de 1 en octubre de 2017
+* D_Feb2020: Dummy que toma el valor de 1 en febrero de 2020
+* D_Mar2020: Dummy que toma el valor de 1 en marzo de 2020
+* D_Abr2020: Dummy que toma el valor de 1 en abril de 2020
+* D_May2020: Dummy que toma el valor de 1 en mayo de 2020
+* D_Jun2020: Dummy que toma el valor de 1 en junio de 2020
+* D_Jul2020: Dummy que toma el valor de 1 en julio de 2020
+* D_Ene2021: Dummy que toma el valor de 1 en enero de 2021
+* D_Mar2021: Dummy que toma el valor de 1 en marzo de 2021
+* D_Ene: Dummy que toma el valor de 1 en todos los eneros
+* D_Dic: Dummy que toma el valor de 1 en todos los diciembres
+
+Fuente: INEGI, https://www.inegi.org.mx/app/indicadores/?tm=0&t=1090
+
+```{r}
+
+Datos <- read_excel("Base_Transporte_ARIMA.xlsx", sheet = "Datos", col_names = TRUE)
+
+head(Datos)
+
+```
+
+# Funciones que extrae y grafica las raices del polinomio caracteristico
+
+```{r}
+
+source("arroots.R")
+source("maroots.R")
+source("plot.armaroots.R")
+
+```
+
+# Conversion a series de tiempo:
+
+```{r}
+
+Pax_Nal <- ts(Datos$Pax_Nal, 
+              start = c(2000, 1), 
+              freq = 12)
+
+LPax_Nal <- ts(log(Datos$Pax_Nal), 
+               start = c(2000, 1), 
+               freq = 12)
+
+DLPax_Nal <- ts(log(Datos$Pax_Nal) - lag(log(Datos$Pax_Nal), k = 1),
+                start = c(2000, 1), 
+                freq = 12)
+
+DLPax_Nal_S <- diff(DLPax_Nal, 12)
+
+D_Feb2020	<- ts(Datos$D_Feb2020,
+                start = c(2000, 1), 
+                freq = 12)
+
+D_Mar2020	<- ts(Datos$D_Mar2020, 
+                start = c(2000, 1), 
+                freq = 12)
+
+D_Abr2020	<- ts(Datos$D_Abr2020, 
+                start = c(2000, 1), 
+                freq = 12)
+
+D_May2020	<- ts(Datos$D_May2020, 
+                start = c(2000, 1), 
+                freq = 12)
+
+D_Jun2020	<- ts(Datos$D_Jun2020, 
+                start = c(2000, 1), 
+                freq = 12)
+
+D_Jul2020 <- ts(Datos$D_Jul2020, 
+                start = c(2000, 1), 
+                freq = 12)
+
+D_Ene2021 <- ts(Datos$D_Ene2021, 
+                start = c(2000, 1), 
+                freq = 12)
+
+D_Mar2021 <- ts(Datos$D_Mar2021, 
+                start = c(2000, 1), 
+                freq = 12)
+
+D_Ene <- ts(Datos$D_Ene, 
+            start = c(2000, 1), 
+            freq = 12)
+
+D_Feb <- ts(Datos$D_Feb, 
+            start = c(2000, 1), 
+            freq = 12)
+
+D_Jul <- ts(Datos$D_Jul, 
+            start = c(2000, 1), 
+            freq = 12)
+
+D_Dic <- ts(Datos$D_Dic, 
+            start = c(2000, 1), 
+            freq = 12)
+
+```
+
+# Graficas:
+
+```{r, echo = FALSE}
+
+par(mfrow=c(3,1))
+
+plot(Pax_Nal, xlab = "Tiempo", ylab = "Pasajeros",
+     main = "Pasajeros en vuelos nacionales de salida",
+     col = "darkgreen")
+
+plot(LPax_Nal, xlab = "Tiempo", ylab = "LN Pasajeros", 
+     main = "LN Pasajeros en vuelos nacionales de salida",
+     col = "darkblue")
+
+plot(DLPax_Nal, xlab = "Tiempo",  ylab = "DLN Pasajeros",
+     main = "Diff LN Pasajeros en vuelos nacionales de salida", 
+     col = "darkred")
+
+par(mfrow=c(1,1))
+
+```
+
+# Visualizar estacionalidad
+
+```{r}
+
+boxplot(DLPax_Nal ~ month(Datos$Periodo), 
+        xlab= "Mes", 
+        main = "Crecimiento mensual respecto al mes anterior")
+points(DLPax_Nal ~ month(Datos$Periodo), col = "darkblue")
+abline(h = 0, col = "darkred")
+
+```
+
+
+```{r}
+
+boxplot(DLPax_Nal_S ~ month(Datos$Periodo[-c(1:12)]), 
+        xlab= "Mes", 
+        main = "Crecimiento mensual respecto al mes equivalente del año anterior")
+points(DLPax_Nal_S ~ month(Datos$Periodo)[-c(1:12)], col = "darkblue")
+abline(h = 0, col = "darkred")
+
+```
+
+
+```{r}
+
+par(mfrow=c(2,1))
+
+plot(DLPax_Nal, xlab = "Tiempo", ylab = "LN Pasajeros", 
+     main = "LN Pasajeros en vuelos nacionales de salida",
+     col = "darkblue")
+
+
+plot(diff(DLPax_Nal,12), xlab = "Tiempo",  ylab = "SDLN Pasajeros",
+     main = "Seasonal Diff LN Pasajeros en vuelos nacionales de salida", 
+     col = "darkred")
+
+par(mfrow=c(1,1))
+
+```
+
+# Funciones que determinan el rezago optimo (que minimiza el criterio de Akaike)
+
+```{r}
+
+source("Lag_Opt_ARIMA_Exog.R")
+source("Lag_Opt_SARIMA_Exog.R")
+
+```
+
+# ARIMA Optimo
+
+```{r}
+
+dumm_ARIMA = cbind(D_Ene, D_Feb, D_Jul, D_Dic, D_Mar2020, D_Abr2020, D_Jun2020, D_Jul2020, D_Mar2021)
+
+Lag_Opt_ARIMA_Exog(p_max = 6, q_max = 6, 
+                   X_t = DLPax_Nal, 
+                   Ex = 1,
+                   Z_t = dumm_ARIMA)
+```
+
+
+```{r}
+ARIMA_Ex_DLPax_Nal <- arima(DLPax_Nal, c(6,0,6), 
+                            xreg=dumm_ARIMA,
+                            method = "ML")
+
+ARIMA_Ex_DLPax_Nal
+
+par(mfrow=c(1,2))
+plot.armaroots(arroots(ARIMA_Ex_DLPax_Nal), 
+               main="Inverse AR roots of \nAR(p): LN PAx Nal")
+plot.armaroots(maroots(ARIMA_Ex_DLPax_Nal), 
+               main="Inverse AR roots of \nAR(p): LN PAx Nal")
+par(mfrow=c(1,1))
+acf(ARIMA_Ex_DLPax_Nal$residuals, na.action = na.pass)
+
+plot(ARIMA_Ex_DLPax_Nal$residuals)
+
+```
+
+# SARIMA optimo
+
+```{r}
+
+dumm_SARIMA <-cbind(D_Mar2020[-c(1:12)], D_Abr2020[-c(1:12)], D_Jun2020[-c(1:12)], D_Jul2020[-c(1:12)], D_Mar2021[-c(1:12)])
+
+Lag_Opt_SARIMA_Exog(p_max = 4, q_max = 4,
+                    P_max = 0, Q_max = 2,
+                   X_t = DLPax_Nal_S,
+                   Ex = 0)
+
+Lag_Opt_SARIMA_Exog(p_max = 4, q_max = 4, 
+                    P_max = 0, Q_max = 2,
+                    X_t = DLPax_Nal_S, 
+                    Ex = 1,
+                    Z_t = dumm_SARIMA)
+
+```
+
+
+```{r}
+
+SARIMA_Ex_DLPax_Nal <- arima(DLPax_Nal_S, order = c(1, 0, 4),
+                             seasonal = c(0, 0, 2),
+                           xreg = dumm_SARIMA,
+                           method = "ML")
+
+SARIMA_Ex_DLPax_Nal
+
+par(mfrow=c(1,2))
+plot.armaroots(arroots(SARIMA_Ex_DLPax_Nal), 
+               main="Inverse AR roots of \nAR(p): LN PAx Nal")
+plot.armaroots(maroots(SARIMA_Ex_DLPax_Nal), 
+               main="Inverse AR roots of \nAR(p): LN PAx Nal")
+par(mfrow=c(1,1))
+
+acf(SARIMA_Ex_DLPax_Nal$residuals, na.action = na.pass)
+
+plot(SARIMA_Ex_DLPax_Nal$residuals)
+
+
+```
+
+# ARIMA auto.arima():
+
+```{r}
+
+?auto.arima
+#auto.arima
+
+```
+
+Implementación ARIMA:
+
+```{r}
+
+ARIMA_model = auto.arima(DLPax_Nal,
+                         xreg = dumm_ARIMA, 
+                         seasonal = FALSE)
+
+ARIMA_model
+
+#
+plot(ARIMA_model)
+autoplot(ARIMA_model)
+checkresiduals(ARIMA_model)
+
+```
+
+Implementación SARIMA:
+
+```{r}
+
+SARIMA_model = auto.arima(DLPax_Nal_S, xreg =dumm_SARIMA)
+
+SARIMA_model
+
+autoplot(SARIMA_model)
+
+```
+
+
+
+
+```{r}
+
+dumm_SARIMA <-cbind(D_Mar2020, D_Abr2020, D_Jun2020, D_Jul2020, D_Mar2021)
+
+SARIMA_model2= auto.arima(LPax_Nal, xreg = dumm_SARIMA)
+
+SARIMA_model2
+
+autoplot(SARIMA_model2)
+
+checkresiduals(SARIMA_model2)
+
+plot(SARIMA_model2$residuals)
+
+plot(ARIMA_model$residuals, col = "blue")
+lines(SARIMA_model2$residuals)
+
+plot(SARIMA_model$residuals)
+lines(SARIMA_model2$residuals, col='red')
+
+
+```
+
+
+

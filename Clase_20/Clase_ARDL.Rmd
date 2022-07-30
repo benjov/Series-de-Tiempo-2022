@@ -1,0 +1,144 @@
+---
+title: "Clase 20. Modelo ADRL"
+author: "Benjamin Oliva & Omar Alfaro-Rivera"
+date: "30/11/2021"
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+### Dependencies and Setup
+```{r setup, include = FALSE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#install.packages("zoo")
+#install.packages("xts")
+#install.packages("ARDL")
+# 
+library(zoo) 
+library(xts) 
+library(ARDL)
+
+```
+
+# DESCRIPCIÓN DEL PROBLEMA
+
+Supongamos que queremos modelar el logaritmo de dinero (M2) como una función de LRY (logarithm of real income), IBO (bond rate) e IDE (bank deposit rate). 
+
+* El problema es que la aplicación de una regresión de MCO en datos no estacionarios daría lugar a una regresión espúria. 
+
+* Los parámetros estimados serían consistentes solo si las series estuvieran cointegradas.
+ 
+
+# Importamos Datos desde un dataset de R:
+
+A data frame with 55 rows and 5 variables. Time period from 1974:Q1 until 1987:Q3.
+
+LRM: logarithm of real money, M2
+
+LRY: logarithm of real income
+
+LPY: logarithm of price deflator
+
+IBO: bond rate
+
+IDE: bank deposit rate
+
+```{r echo = FALSE}
+
+data(denmark)
+#?denmark # see for more information
+names(denmark)
+
+```
+
+# Procedimiento:
+
+## 1. Calculamos un auto ADRL para determinar la combinación óptima de rezagos.
+
+```{r}
+
+models <- auto_ardl(LRM ~ LRY + IBO + IDE, data = denmark, max_order = 5)
+
+names(models)
+
+```
+
+```{r}
+
+models$top_orders
+
+```
+
+```{r}
+
+models$best_order
+
+```
+
+```{r}
+models$best_model
+
+```
+
+```{r}
+BestMod <- models$best_model
+
+summary(BestMod)
+
+```
+
+## 2. UECM (Unrestricted Error Correction Model) of the underlying ARDL.
+```{r}
+
+UECM_BestMod <- uecm(BestMod)
+
+summary(UECM_BestMod)
+
+```
+
+## 3. RECM (Restricted Error Correction Model) of the underlying ARDL
+Obs: allowing the constant to join the short-run relationship (case 2), instead of the long-run (case 3)
+
+```{r}
+
+RECM_BestMod <- recm(UECM_BestMod, case = 2)
+
+summary(RECM_BestMod)
+
+```
+
+## 4. long-run levels relationship (cointegration) 
+
+```{r}
+
+bounds_f_test(BestMod, case = 2)
+
+```
+
+## 5. Long-run multipliers (with standard errors, t-statistics and p-values)
+
+```{r}
+
+multipliers(BestMod)
+
+```
+
+```{r}
+
+Result <- coint_eq(BestMod, case = 2)
+
+```
+
+# Make the plot
+
+```{r}
+
+Datos <- cbind.zoo(LRM = denmark[,"LRM"], Result)
+
+Datos <- xts(Datos)
+
+plot(Datos, legend.loc = "right")
+
+```
+#

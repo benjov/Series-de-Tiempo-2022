@@ -1,0 +1,266 @@
+---
+title: "Clase 13. Causalidad de Granger"
+author: "Benjamin Oliva & Omar Alfaro-Rivera"
+date: "17/10/2021"
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+### Dependencies and Setup
+```{r setup, include = FALSE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#install.packages("ggplot2")
+#install.packages("dplyr")
+#install.packages("readxl")
+#install.packages(stats)
+#install.packages("zoo")
+#install.packages("lmtest")
+# 
+library(ggplot2)
+library(dplyr)
+library(readxl)
+library(stats)
+library(zoo)
+library(lmtest)
+
+```
+
+# Importamos Datos desde un archivo de R:
+
+Los datos "cargados" son los originales y los ajustados por estacionalidad. Los cuales son:
+
+* INPC: Indice Nacional de Precios al Consumidor (2QJul2018 = 100)
+
+* TC: Tipo de Cambio FIX 
+
+* CETE28: Tasa de rendimiento promedio mensual de los Cetes 28, en por ciento anual
+
+* IGAE: Indicador global de la actividad económica (2013 = 100)
+
+* IPI: Industrial Production Index (2012 = 100)
+
+```{r echo = FALSE}
+
+load("Datos_Ad.RData")
+
+head(Datos_Ad)
+
+```
+
+## Conversion a series de tiempo:
+
+```{r}
+
+INPC <- ts(Datos_Ad$INPC_Ad, 
+           start = c(2000, 1), 
+           freq = 12)
+
+DLINPC <- ts(log(Datos_Ad$INPC_Ad) - lag(log(Datos_Ad$INPC_Ad), k = 1), 
+             start = c(2000, 1), 
+             freq = 12)
+
+TC <- ts(Datos_Ad$TC_Ad, 
+         start = c(2000, 1), 
+         freq = 12)
+
+DLTC <- ts(log(Datos_Ad$TC_Ad) - lag(log(Datos_Ad$TC_Ad), k = 1), 
+           start = c(2000, 1), 
+           freq = 12)
+
+CETE28 <- ts(Datos_Ad$CETE28_Ad, 
+             start = c(2000, 1), 
+             freq = 12)
+
+DLCETE28 <- ts(log(Datos_Ad$CETE28_Ad) - lag(log(Datos_Ad$CETE28_Ad), k = 1), 
+               start = c(2000, 1), 
+               freq = 12)
+
+```
+
+## Graficas:
+
+```{r }
+
+par(mfrow=c(3, 1))
+
+plot(DLINPC, xlab = "Tiempo", 
+     main = "Diferencias Logarítmicas del INPC",
+     col = "darkgreen")
+
+plot(DLTC, xlab = "Tiempo", 
+     main = "Diferencias Logarítmicas del Tipo de Cambio",
+     col = "darkblue")
+
+plot(DLCETE28, xlab = "Tiempo", 
+     main = "Diferencias Logarítmicas de los Cetes a 28 dias",
+     col = "darkred")
+
+par(mfrow=c(1, 1))
+
+```
+
+## Prueba de Causalidad de Granger
+
+### Combinacion en un solo set de datos
+
+```{r }
+
+Datos <- data.frame(cbind(DLINPC, DLTC, DLCETE28))
+
+Datos <- cbind(Datos_Ad["FECHA"], Datos)
+
+names(Datos)
+
+```
+
+## Las pruebas de causalidad para 4, 8, 12 y 16 rezagos:
+
+### 4
+
+```{r }
+
+grangertest(DLINPC ~ DLTC, order = 4, data = Datos)
+
+```
+
+```{r }
+grangertest(DLTC ~ DLINPC, order = 4, data = Datos)
+
+```
+
+```{r }
+
+grangertest(DLINPC ~ DLCETE28, order = 4, data = Datos)
+
+```
+
+```{r }
+
+grangertest(DLCETE28 ~ DLINPC, order = 4, data = Datos)
+
+```
+
+```{r }
+
+grangertest(DLTC ~ DLCETE28, order = 4, data = Datos)
+
+```
+
+```{r }
+
+grangertest(DLCETE28 ~ DLTC, order = 4, data = Datos)
+
+```
+
+### 8
+
+```{r }
+
+grangertest(DLINPC ~ DLTC, order = 8, data = Datos)
+
+```
+
+```{r }
+grangertest(DLTC ~ DLINPC, order = 8, data = Datos)
+
+```
+
+```{r }
+
+grangertest(DLINPC ~ DLCETE28, order = 8, data = Datos)
+
+```
+
+```{r }
+
+grangertest(DLCETE28 ~ DLINPC, order = 8, data = Datos)
+
+```
+
+```{r }
+
+grangertest(DLTC ~ DLCETE28, order = 8, data = Datos)
+
+```
+
+```{r }
+
+grangertest(DLCETE28 ~ DLTC, order = 8, data = Datos)
+
+```
+
+### 12
+
+```{r }
+
+grangertest(DLINPC ~ DLTC, order = 12, data = Datos)
+
+```
+
+```{r }
+grangertest(DLTC ~ DLINPC, order = 12, data = Datos)
+
+```
+
+```{r }
+
+grangertest(DLINPC ~ DLCETE28, order = 12, data = Datos)
+
+```
+
+```{r }
+
+grangertest(DLCETE28 ~ DLINPC, order = 12, data = Datos)
+
+```
+
+```{r }
+
+grangertest(DLTC ~ DLCETE28, order = 12, data = Datos)
+
+```
+
+```{r }
+
+grangertest(DLCETE28 ~ DLTC, order = 12, data = Datos)
+
+```
+
+### 16
+
+```{r }
+
+grangertest(DLINPC ~ DLTC, order = 16, data = Datos)
+
+```
+
+```{r }
+grangertest(DLTC ~ DLINPC, order = 16, data = Datos)
+
+```
+
+```{r }
+
+grangertest(DLINPC ~ DLCETE28, order = 16, data = Datos)
+
+```
+
+```{r }
+
+grangertest(DLCETE28 ~ DLINPC, order = 16, data = Datos)
+
+```
+
+```{r }
+
+grangertest(DLTC ~ DLCETE28, order = 16, data = Datos)
+
+```
+
+```{r }
+
+grangertest(DLCETE28 ~ DLTC, order = 16, data = Datos)
+
+```

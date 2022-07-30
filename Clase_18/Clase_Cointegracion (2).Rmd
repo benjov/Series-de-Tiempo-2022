@@ -1,0 +1,192 @@
+---
+title: "Clase 18. Cointegracion (2)"
+author: "Benjamin Oliva & Omar Alfaro-Rivera"
+date: "17/11/2021"
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+### Dependencies and Setup
+```{r setup, include = FALSE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#install.packages("ggplot2")
+#install.packages("dplyr")
+#install.packages(stats)
+#install.packages("MASS")
+#install.packages("strucchange")
+#install.packages("zoo")
+#install.packages("sandwich")
+#install.packages("urca")
+#install.packages("lmtest")
+#install.packages("vars")
+# 
+library(ggplot2)
+library(dplyr)
+library(stats)
+library(MASS)
+library(strucchange)
+library(zoo)
+library(sandwich)
+library(urca)
+library(lmtest)
+library(vars)
+
+```
+
+# Importamos Datos desde un archivo de R:
+
+Los datos "cargados" son los originales y los ajustados por estacionalidad. Los cuales son:
+
+* INPC: Indice Nacional de Precios al Consumidor (2QJul2018 = 100)
+
+* TC: Tipo de Cambio FIX 
+
+* CETE28: Tasa de rendimiento promedio mensual de los Cetes 28, en por ciento anual
+
+* IGAE: Indicador global de la actividad económica (2013 = 100)
+
+* IPI: Industrial Production Index (2012 = 100)
+
+```{r echo = FALSE}
+
+load("Datos_Ad.RData")
+
+head(Datos_Ad)
+
+```
+
+## Conversion a series de tiempo:
+
+```{r}
+
+Datos <- ts(Datos_Ad[7: 11], 
+            start = c(2000, 1), 
+            end = c(2021, 7), 
+            freq = 12)
+
+LDatos <- log(Datos)
+
+DLDatos <- diff(log(Datos, base = exp(1)), 
+                lag = 1, 
+                differences = 1)
+
+```
+
+# Gráficas
+```{r echo = FALSE}
+
+plot(cbind(LDatos, DLDatos), 
+     plot.type = "m", nc = 2,
+     col = c("darkgreen", "darkblue", "darkred", "orange", "purple"), 
+     main = "Comparacion de Series en Diferencias", 
+     xlab = "Tiempo")
+
+```
+
+## Condicional en que todas las series son I(1)
+ 
+ 
+ 
+## VAR Selection:
+
+```{r}
+
+VARselect(LDatos, lag.max = 10, type = "both")
+
+VARselect(LDatos, lag.max = 10, type = "trend")
+
+VARselect(LDatos, lag.max = 10, type = "const")
+
+VARselect(LDatos, lag.max = 10, type = "none")
+
+```
+
+# Cointegration Test:
+ca.jo = function (x, type = c("eigen", "trace"), ecdet = c("none", "const", 
+"trend"), K = 2, spec = c("longrun", "transitory"), season = NULL, 
+dumvar = NULL) 
+
+## Prueba basada en la TRAZA
+
+```{r}
+
+summary(ca.jo(LDatos, type = "trace", ecdet = "trend", K = 2, spec = "longrun"))
+
+summary(ca.jo(LDatos, type = "trace", ecdet = "const", K = 2, spec = "longrun"))
+
+summary(ca.jo(LDatos, type = "trace", ecdet = "none", K = 2, spec = "longrun"))
+
+```
+
+## Prueba basada en el Max Eigen Value:
+
+```{r}
+
+summary(ca.jo(LDatos, type = "eigen", ecdet = "trend", K = 2, spec = "longrun"))
+
+summary(ca.jo(LDatos, type = "eigen", ecdet = "const", K = 2, spec = "longrun"))
+
+summary(ca.jo(LDatos, type = "eigen", ecdet = "none", K = 2, spec = "longrun"))
+
+```
+
+```{r}
+
+CA_1 <- ca.jo(LDatos, type = "trace", ecdet = "const", K = 2, spec = "longrun")
+
+summary(CA_1)
+
+```
+
+# Residuales:
+
+```{r}
+
+TT <- ts(c(1:259), 
+         start = c(2000, 1), 
+         end = c(2021, 7), 
+         freq = 12)
+
+```
+
+```{r}
+
+U <- LDatos[ , 1] + 0.7559141*LDatos[ , 2] - 0.3623270*LDatos[ , 3] - 5.0035388*LDatos[ , 4] + 4.2690269*LDatos[ , 5] - 3.2113796
+
+```
+
+```{r}
+
+plot(U, 
+     main = "Residuales de la Ecuación de Cointegración",
+     type = "l", 
+     col = "darkred")
+
+```
+
+# Raices Unitarias
+# NIVELES
+
+```{r}
+
+summary(ur.df(U, type = "trend", lags = 5))
+
+summary(ur.df(U, type = "drift", lags = 5))
+
+summary(ur.df(U, type = "none", lags = 5))
+
+```
+
+```{r}
+
+summary(ur.df(DLDatos[, 5], type = "trend", lags = 4))
+
+summary(ur.df(DLDatos[, 5], type = "drift", lags = 4))
+
+summary(ur.df(DLDatos[, 5], type = "none", lags = 4))
+
+```
+
+

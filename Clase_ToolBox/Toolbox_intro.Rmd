@@ -1,0 +1,108 @@
+---
+title: "Clase 0.5:  Toolbox e introducción a RMarkDown"
+author: "Omar Alfaro-Rivera"
+date: "4/9/2021"
+output: html_document
+---
+## Toolbox
+
+### R y R Studio 
+
+Hay una distinción importante entre _R_ y _R Studio_ que muchas veces no es suficientemente clara. Básicamente R se trata del lenguaje de programación que se encarga de computar todas las intrucciones que se señalen, mientras que R Studio es el medio "amable" a través del cual nos podemos comunicar mediante este lenguaje. 
+
+#### Instalación 
+
+Para instalar _R_ es necesario visitar [este enlace](https://cran.r-project.org/bin/windows/base/) en caso de ser usuario de _Windows_  y visitar [este enlace](https://cran.r-project.org/bin/macosx/) en caso de usar MAC, esto para descargar y posteriormente instalar. En el caso de _R Studio_ en ambos casos es necesario visitar [esta página](https://www.rstudio.com/products/rstudio/download/) y descargar la opción marcada como "RStudio Desktop FREE". 
+
+Al ejecutar ambos programas de instalación, a menos que se tenga una idea clara de lo que se están haciendo, lo recomendable es seleccionar todas las opciones de instalación seleccionadas por defecto.
+
+#### Tipos de archivos
+
+Uno de los aspectos que vuelven tan valiosa una herramienta como _R_, es la facilidad con que nos permite una perfecta replicabilidad de nuestras investigaciones o trabajos académicos. En este sentido, el valor de las intrucciones que generamos tienen mucho más valor una vez que tenemos la posibilidad de generar un código que funcione basicamente desde cualquier computadora. Hay dos opciones muy populares para este objetivo.
+
+* Script de R: este tipo de archivos (terminación .R) guarda una serie de instrucciones, el único producto que generan es la llamada de cada línea de Código dentro de la consola. 
+
+* R Markdown: este tipo de archivo (terminación .Rmd) a la vez que nos permiten llamar lineas de código que se ejecutan en la consola, permite mezclarlo con líneas de texto en _Mark Down_ que produce archivos en formatos que facilmente se pueden compartir como _html_, _pdf_ o _MS word_. 
+
+### Google  Colab 
+
+Existe una opción adicional en la que podemos trabajar con _R_. Idealmente no es la primera opción que consideramos, pero es de mucha ayuda cuando nos encontramos trabajando en una maquina con una limitada capacidad de procesamiento o en un ambiente de trabajo como android o un sistema que se le parezca.
+
+Esta opción es un ambiente brindado por _[Google](https://colab.research.google.com/)_ y que en principio está diseñado para trabajar con _Python_, sin embargo actualmente existen librerías con las cuales podemos copilar código de _R_ desde un entorno de trabajo de Python, por lo que el material de la clase también se brinda bajo esta opción.
+
+* Notebook: este tipo de archivos (terminación .ipybn) permiten copilar código a la vez que dan la posibilidad de realizar notas mediante el lenguaje de marcado de texto _Mark Down_.  
+
+La manera más sencilla de utilizar esta opción es instalar en el navegador google chrome la extensión de _Colab_, abrir la página donde se encuentra el archivo .ipynb y presionar la extensión de Colab. 
+
+Cabe señalar que para hacer uso de esta opción es necesario tener una cuenta de google. Una desventaja de esta opción es que en cada sesión debemos de instalar las librerías que utilizaremos. 
+
+### Git y Github
+
+Git es un software especializado en el control de versiones. Los entornos de trabajo _Unix_ y _Linux_, al ser ambientes de trabajo ideales para programadores, ya tienen preinstalado _git_. En el caso de _Windows_ es necesario realizar la instalación de [Git Bash](https://gitforwindows.org/). 
+
+Dicho lo anterior, [GitHub](https://github.com/) viene a ser una red social de desarrolladores que pueden compartir sus proyectos y alojarlos en la nube. Es de gran utilidad en los emprendimientos de carácter colaborativo, como es el caso de esta clases, en la que tras una serie de pasos es posible que siempre se aseguren de tener la última versión de los archivos que estaremos utilizando. 
+
+1) Al abrir la consola (en el caso de Windows puede ser bash y omitir este primer paso) escribir la sentencia: git
+
+2) Cambiar el directorio de trabajo, esto se consigue escribiendo: _cd "la carpeta donde pretenden alojar los archivos de la clase"_
+
+3) Clonar el repositorio en la nube dentro de nuestra máquina: git clone "https://github.com/benjov/Series-de-Tiempo-2021"
+
+4) Como podremos notar, esto crea una nueva carpeta a la cual podemos acceder con la sentencia: cd .\ Series-de-Tiempo-2021
+
+5) Finalmente cada  que deseemos actualizar los archivos con la conexión con nuestro repositorio remoto, bastará con ir a la ubicación de la carpeta con el domando _cd_ y escribir: git pull
+
+## Programación Orientada a Objetos
+
+En este curso utilizaremos uno de los lenguajes de programaión más utilizados en el mundo estadístico. Como muchos otros (Java, JavaScript, Python, VBA, por mencionar algunos), __R__ es un lenguaje bajo el paradigma de Programación Orientado a Objetos. En términos de funcionamiento computacional esto tiene diversas implicaciones, sin embargo, para fines de esta clase es suficiente comprender que en el ambiente de trabajo todo son bojetos, y que en función de su clase y propiedades está el alcance de 
+
+
+```{r setup, include=FALSE}
+a <- 85
+class(a)
+b <- "2"
+class(b)
+a + as.numeric(b)
+```
+
+
+## R Markdown
+
+Básicamente la estrucura para declarar encabezados, es utilizar hash (#) al inicio, la estructura base es que el número de estos símbolos explicar la importancia Gerarquica de nuestro encabezado.
+
+### R Markdown
+#### R Markdown
+##### R Markdown
+
+En el caso de las listas, basta con poner un asterisco (*), espacio y posteriormente la oración o el texto, para hacer notar que queremos plasmar una lista. 
+
+* Esta es 
+* Una lista
+
+Para resaltar algunas partes del texto podemos valernos del guión bajo, una oración dentro de guiones bajos se tomará como itálicas y con dos guiones bajo de cada lato se toma como negritas. 
+
+_Estas son Italicas_
+
+__Estas son negritas__
+
+Las ecuaciones son uno de los atractivos más grandes de MarkDown, dado que el producto que podemos escribir es muy estético. Este aspecto tiene muchas opciones y detalles, para una descripción más profunda se recomienta visitar [esta página](http://csrgxtu.github.io/2015/03/20/Writing-Mathematic-Fomulars-in-Markdown/), sin embargo simplemente basta con hacer una delcaración entre signos de moneda para que MarkDown entienda que se trata de una ecuación
+
+Ecuación: $Y = \beta_0+\beta_iX_i+\hat{e}_i$
+
+Una de las razones principales por las que utilizaremos R Markdown para esta clase, es básicamente por la ventaja que significa poder mantener pedazos ( _chunks_ ) de código dentro de las notas. Esto permite realizar una varidad enorme de archivos producidos desde R. 
+
+```{r chunk 1, echo=FALSE}
+#Este es un chunk con echo = FALSE
+
+X = seq(1:1000)
+Y = sqrt(X)
+plot(X,Y)
+```
+
+```{r chunk 2, include=FALSE}
+#Este es un chunk sin echo = FALSE
+
+X = seq(1:100000)
+Y = sqrt(X)
+plot(X,Y)
+```
