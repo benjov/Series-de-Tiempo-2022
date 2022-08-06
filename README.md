@@ -1,5 +1,5 @@
 # Series-de-Tiempo-2021
-Curso de Análisis de Series de Tiempo, Otoño 2021
+Curso de Análisis de Series de Tiempo, Otoño 2022
 
 # Temario.
 
@@ -78,3 +78,12 @@ b) M−GARCH
 ## 10. Modelos de Datos Panel
 
 ## 11. Otros Modelos de Series de Tiempo No Lineales (Modelos de cambio de régimen) 
+
+# Recursos del Curso:
+
+## 1. Notas de Clase: https://timely-sherbet-faa2ff.netlify.app/index.html
+
+## 2. Scripts y R-Markdown: https://github.com/benjov/Series-de-Tiempo-2022
+Recomendación: Clonar el repositorio y actualizar constantemente (git pull)
+
+## 3. Carpeta de Google Drive para difusión de temario, tareas, exámenes y bibliografía: https://drive.google.com/drive/folders/1I3WA2bLLedpztiaU1ihFsFEx6HHPambT?usp=sharing
