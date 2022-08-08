@@ -87,3 +87,5 @@ b) M−GARCH
 Recomendación: Clonar el repositorio y actualizar constantemente (git pull)
 
 ## 3. Carpeta de Google Drive para difusión de temario, tareas, exámenes y bibliografía: https://drive.google.com/drive/folders/1I3WA2bLLedpztiaU1ihFsFEx6HHPambT?usp=sharing
+
+## 4. Pizarras de clase: https://cideo365-my.sharepoint.com/:o:/g/personal/benjamin_oliva_cide_edu/EjnPlU-N-j1DnIDQUg2XbagBvjEvpC97EKugi-MhZcn6Zw?e=Zfih7p
