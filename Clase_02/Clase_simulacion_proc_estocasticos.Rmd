@@ -107,7 +107,6 @@ Moneda <- function(R, Time){
 Inputs / argumentos de la funcion, para el caso de lanzar una moneda
 
 ```{r}
-
 Resultados <- c(-1, 1)
 #
 Periodos <- 10000
