@@ -49,7 +49,7 @@ rnorm(10, mean = 0, sd = 2)
 
 
 ```{r}
-set.seed(10101) # Es una constate (la semilla) que fija la serie de numeros aleatorios
+set.seed(12345) # Es una constate (la semilla) que fija la serie de numeros aleatorios
 
 Z_t <- rnorm(1000, mean = 0, sd = 2)
 
