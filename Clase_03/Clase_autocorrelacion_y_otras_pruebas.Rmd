@@ -172,14 +172,14 @@ ggplot(data = Datos, aes(x = Periodo)) +
   geom_line(aes(y = Pax_Nal, color = )) +
   geom_line(aes(y = Pax_Int, color = )) +
   scale_color_brewer(type = "qual", palette = 6) +
-  #theme_bw() + 
+  #theme_bw() +
   theme(legend.position = "bottom") +
   theme(legend.title = element_blank()) +
-  guides(col = guide_legend(nrow = 1, byrow = TRUE)) + 
-  xlab("Tiempo") + 
-  ylab("Pasajeros") + 
-  theme(plot.title = element_text(size = 11, face = "bold", hjust = 0)) + 
-  theme(plot.subtitle = element_text(size = 10, hjust = 0)) + 
+  guides(col = guide_legend(nrow = 1, byrow = TRUE)) +
+  xlab("Tiempo") +
+  ylab("Pasajeros") +
+  theme(plot.title = element_text(size = 11, face = "bold", hjust = 0)) +
+  theme(plot.subtitle = element_text(size = 10, hjust = 0)) +
   theme(plot.caption = element_text(size = 10, hjust = 0)) +
   theme(plot.margin = unit(c(1,1,1,1), "cm")) +
   labs(
