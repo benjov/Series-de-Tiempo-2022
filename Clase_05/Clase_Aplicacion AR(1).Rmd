@@ -53,21 +53,21 @@ Una serie - caso univariado:
 # En Niveles
 Dat_Aereo <- ts(Datos[c("Pax_Nal", "Pax_Int", "Vue_Nal", "Vue_Int")], 
                 start = c(2000, 1), 
-                end = c(2021, 7), 
+                end = c(2022, 6), 
                 freq = 12)
 
 Pax_Metro <- ts(Datos$Pax_Metro, start = c(2000, 1), 
-                end = c(2021, 7), 
+                end = c(2022, 6), 
                 freq = 12)
 
 # En Logaritmos:
 Dat_LAereo <- ts(log(Datos[c("Pax_Nal", "Pax_Int", "Vue_Nal", "Vue_Int")]), 
                 start = c(2000, 1), 
-                end = c(2021, 7), 
+                end = c(2022, 6), 
                 freq = 12)
 
 Pax_LMetro <- ts(log(Datos$Pax_Metro), start = c(2000, 1), 
-                end = c(2021, 7), 
+                end = c(2022, 6), 
                 freq = 12)
 
 # Diferencias mensuales:
