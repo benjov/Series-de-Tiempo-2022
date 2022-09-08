@@ -49,13 +49,11 @@ head(Datos)
 
 Pax_Nal <- ts(Datos$Pax_Nal, 
               start = c(2000, 1),
-              end = c(2021, 7), 
               freq = 12)
 
 # Logaritmos:
 LPax_Nal <- ts(log(Datos$Pax_Nal), 
                start = c(2000, 1), 
-               end = c(2021, 7), 
                freq = 12)
 
 # Diferencias mensuales:
@@ -101,7 +99,11 @@ plot(AR_LPax_Nal$residuals,
      main = "Residuales del AR (2) para LN de pasajeros en vuelos nacionales de salida",
      col = "darkgreen")
 
-# AR(2) en DIFERENCIAS:
+```
+
+AR(2) en DIFERENCIAS:
+
+```{r}
 
 AR_DLPax_Nal <- arima(DLPax_Nal, order = c(2, 0, 0), method = "ML")
 

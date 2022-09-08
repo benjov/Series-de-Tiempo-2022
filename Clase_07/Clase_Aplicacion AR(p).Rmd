@@ -110,7 +110,11 @@ plot(AR_LPax_Int$residuals)
 plot.armaroots(arroots(AR_LPax_Int), 
                main="Inverse AR roots of \nAR(p): LN PAx Int")
 
-# AR(p) en DIFERENCIAS:
+```
+
+AR(p) en DIFERENCIAS:
+
+```{r}
 
 AR_DLPax_Int <- arima(DLPax_Int, order = c(4, 0, 0), method = "ML")
 
