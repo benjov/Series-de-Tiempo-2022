@@ -160,39 +160,39 @@ head(Predict_Datos)
 ```{r}
 
 D_Mar2020_f	<- ts(Predict_Datos$D_Mar2020, 
-                start = c(2021, 8), 
+                start = c(2022, 7), 
                 freq = 12)
 
 D_Abr2020_f	<- ts(Predict_Datos$D_Abr2020, 
-                start = c(2021, 8), 
+                start = c(2022, 7), 
                 freq = 12)
 
 D_Jun2020_f	<- ts(Predict_Datos$D_Jun2020, 
-                start = c(2021, 8), 
+                start = c(2022, 7), 
                 freq = 12)
 
 D_Jul2020_f <- ts(Predict_Datos$D_Jul2020, 
-                start = c(2021, 8), 
+                start = c(2022, 7), 
                 freq = 12)
 
 D_Mar2021_f <- ts(Predict_Datos$D_Mar2021, 
-                start = c(2021, 8), 
+                start = c(2022, 7), 
                 freq = 12)
 
 D_Ene_f <- ts(Predict_Datos$D_Ene, 
-            start = c(2021, 8), 
+            start = c(2022, 7), 
             freq = 12)
 
 D_Feb_f <- ts(Predict_Datos$D_Feb, 
-            start = c(2021, 8), 
+            start = c(2022, 7), 
             freq = 12)
 
 D_Jul_f <- ts(Predict_Datos$D_Jul, 
-            start = c(2021, 8), 
+           start = c(2022, 7), 
             freq = 12)
 
 D_Dic_f <- ts(Predict_Datos$D_Dic, 
-            start = c(2021, 8), 
+            start = c(2022, 7), 
             freq = 12)
 
 ```
@@ -222,8 +222,8 @@ Pronostico_Arima <- read_excel("Pronostico_Arima.xlsx", sheet = "Datos", col_nam
 Pronostico_Arima$Pax_Nal_f <- Pronostico_Arima$Pax_Nal
 
 for(i in 1:24){
-  Pronostico_Arima$Pax_Nal_f[259 + i] <- 
-    Pronostico_Arima$Pax_Nal_f[259 + i - 1]*(1 + DLPax_Nal_f$pred[i])
+  Pronostico_Arima$Pax_Nal_f[270 + i] <- 
+    Pronostico_Arima$Pax_Nal_f[270 + i - 1]*(1 + DLPax_Nal_f$pred[i])
 }
 
 View(Pronostico_Arima)
