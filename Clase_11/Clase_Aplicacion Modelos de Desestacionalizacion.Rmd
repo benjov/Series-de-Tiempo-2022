@@ -46,7 +46,7 @@ Los datos importados son:
 
 Datos <- read_excel("Base_VAR.xlsx", sheet = "Datos", col_names = TRUE)
 
-head(Datos)
+tail(Datos)
 
 ```
 
@@ -77,6 +77,9 @@ summary(Seas_INPC)
 ```{r}
 
 final(Seas_INPC)
+```
+
+```{r}
 
 INPC_Ad <- final(Seas_INPC)
 

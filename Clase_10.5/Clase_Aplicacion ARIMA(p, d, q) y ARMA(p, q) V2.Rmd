@@ -215,17 +215,17 @@ source("Lag_Opt_SARIMA_Exog.R")
 
 dumm_ARIMA = cbind(D_Ene, D_Feb, D_Jul, D_Dic, D_Mar2020, D_Abr2020, D_Jun2020, D_Jul2020, D_Mar2021)
 
-Lag_Opt_ARIMA_Exog(p_max = 6, q_max = 6, 
-                   X_t = DLPax_Nal, 
-                   Ex = 1,
-                   Z_t = dumm_ARIMA)
+Lag_Opt_ARIMA_Exog( p_max = 6, q_max = 6, 
+                    X_t = DLPax_Nal, 
+                    Ex = 1,
+                    Z_t = dumm_ARIMA )
 ```
 
 
 ```{r}
-ARIMA_Ex_DLPax_Nal <- arima(DLPax_Nal, c(6,0,6), 
-                            xreg=dumm_ARIMA,
-                            method = "ML")
+ARIMA_Ex_DLPax_Nal <- arima( DLPax_Nal, c(6,0,6), 
+                             xreg = dumm_ARIMA,
+                             method = "ML" )
 
 ARIMA_Ex_DLPax_Nal
 
