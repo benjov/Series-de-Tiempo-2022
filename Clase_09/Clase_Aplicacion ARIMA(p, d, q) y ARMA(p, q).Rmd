@@ -198,11 +198,11 @@ par(mfrow=c(1,1))
 
 par(mfrow=c(1,2))
 
-acf(DLPax_Nal[2:234], lag.max = 24,
+acf(DLPax_Nal[2:270], lag.max = 24,
     xlab = "Rezagos",
     main = "Diff LN Pasajeros Nacionales")
 
-pacf(DLPax_Nal[2:234], lag.max = 24, 
+pacf(DLPax_Nal[2:270], lag.max = 24, 
      xlab = 'Rezagos',
      main = "Diff LN Pasajeros Nacionales")
 
@@ -236,7 +236,7 @@ CON variables exogenas:
 Lag_Opt_ARIMA_Exog(p_max = 6, q_max = 6, 
                    X_t = DLPax_Nal, 
                    Ex = 1,
-                   Z_t = cbind(D_Ene, D_Feb, D_Jul, D_Dic) )
+                   Z_t = cbind(D_Ene, D_Feb, D_Jul, D_Dic, D_Abr2020, D_Mar2020) )
 
 ```
 
@@ -255,8 +255,8 @@ Estimacion:
 
 ```{r}
 
-ARMA_Ex_DLPax_Nal <- arima(DLPax_Nal, order = c(3, 0, 4),
-                           xreg = cbind(D_Ene, D_Feb, D_Jul, D_Dic),
+ARMA_Ex_DLPax_Nal <- arima(DLPax_Nal, order = c(5, 0, 4),
+                           xreg = cbind(D_Ene, D_Feb, D_Jul, D_Dic, D_Abr2020, D_Mar2020),
                            method = "ML")
 
 ARMA_Ex_DLPax_Nal
