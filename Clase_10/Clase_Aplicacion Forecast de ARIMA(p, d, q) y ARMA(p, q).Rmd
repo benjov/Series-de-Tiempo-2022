@@ -141,6 +141,8 @@ ARMA_Ex_DLPax_Nal_2 <- arima(DLPax_Nal, order = c(6, 0, 6),
 
 ARMA_Ex_DLPax_Nal_2
 
+plot(ARMA_Ex_DLPax_Nal_2$residuals)
+
 ```
 
 # Forecast:
@@ -210,6 +212,8 @@ DLPax_Nal_f <- predict(ARMA_Ex_DLPax_Nal_2, n.ahead = 24,
                                       D_Mar2020_f, D_Abr2020_f, D_Jun2020_f, D_Jul2020_f, D_Mar2021_f))
 
 names(DLPax_Nal_f)
+
+DLPax_Nal_f$se
 
 ```
 

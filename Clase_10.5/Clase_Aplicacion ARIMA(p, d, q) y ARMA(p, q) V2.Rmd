@@ -299,7 +299,7 @@ Implementación ARIMA:
 
 ARIMA_model = auto.arima(DLPax_Nal,
                          xreg = dumm_ARIMA, 
-                         seasonal = FALSE)
+                         seasonal = TRUE)
 
 ARIMA_model
 
