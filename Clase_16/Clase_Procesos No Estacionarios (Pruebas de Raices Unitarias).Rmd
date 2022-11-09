@@ -63,7 +63,6 @@ head(Datos_Ad)
 
 Datos <- ts(Datos_Ad[7: 11], 
             start = c(2000, 1), 
-            end = c(2021, 7), 
             freq = 12)
 
 LDatos <- log(Datos)
@@ -154,19 +153,19 @@ summary(ur.df(DLDatos[, 2], type = "none", lags = 0))
 ## Augmented Dickey - Fuller
 
 p = int{4*(T/100)^(1/4)}
-   = int{4*(234/100)^(1/4)}
-   = int{4.9475}
-   = 4
+   = int{4*(270/100)^(1/4)}
+   = int{5.12}
+   = 5
 
 ### NIVELES: Tipo de cambio
 
 ```{r}
 
-summary(ur.df(LDatos[, 2], type = "trend", lags = 4))
+summary(ur.df(LDatos[, 2], type = "trend", lags = 5))
 
-summary(ur.df(LDatos[, 2], type = "drift", lags = 4))
+summary(ur.df(LDatos[, 2], type = "drift", lags = 5))
 
-summary(ur.df(LDatos[, 2], type = "none", lags = 4))
+summary(ur.df(LDatos[, 2], type = "none", lags = 5))
 
 ```
 
@@ -174,11 +173,11 @@ summary(ur.df(LDatos[, 2], type = "none", lags = 4))
 
 ```{r}
 
-summary(ur.df(DLDatos[, 2], type = "trend", lags = 4))
+summary(ur.df(DLDatos[, 2], type = "trend", lags = 5))
 
-summary(ur.df(DLDatos[, 2], type = "drift", lags = 4))
+summary(ur.df(DLDatos[, 2], type = "drift", lags = 5))
 
-summary(ur.df(DLDatos[, 2], type = "none", lags = 4))
+summary(ur.df(DLDatos[, 2], type = "none", lags = 5))
 
 ```
 
@@ -190,9 +189,9 @@ ur.pp = function (x, type = c("Z-alpha", "Z-tau"), model = c("constant", "trend"
 
 ```{r}
 
-summary(ur.pp(LDatos[, 2], type = "Z-tau", model = "trend", use.lag = 4))
+summary(ur.pp(LDatos[, 2], type = "Z-tau", model = "trend", use.lag = 5))
 
-summary(ur.pp(LDatos[, 2], type = "Z-tau", model = "constant", use.lag = 4))
+summary(ur.pp(LDatos[, 2], type = "Z-tau", model = "constant", use.lag = 5))
 
 ```
 
@@ -200,9 +199,9 @@ summary(ur.pp(LDatos[, 2], type = "Z-tau", model = "constant", use.lag = 4))
 
 ```{r}
 
-summary(ur.pp(DLDatos[, 2], type = "Z-tau", model = "trend", use.lag = 4))
+summary(ur.pp(DLDatos[, 2], type = "Z-tau", model = "trend", use.lag = 5))
 
-summary(ur.pp(DLDatos[, 2], type = "Z-tau", model = "constant", use.lag = 4))
+summary(ur.pp(DLDatos[, 2], type = "Z-tau", model = "constant", use.lag = 5))
 
 ```
 
@@ -224,8 +223,47 @@ summary(ur.kpss(LDatos[, 2], type = "mu"))
 
 ```{r}
 
-summary(ur.kpss(DLDatos[, 2], type = "tau", use.lag = 4))
+summary(ur.kpss(DLDatos[, 2], type = "tau"))
 
-summary(ur.kpss(DLDatos[, 2], type = "mu", use.lag = 4))
+summary(ur.kpss(DLDatos[, 2], type = "mu"))
+
+```
+
+## Zivot and Andrews: 
+
+ur.za(y, model = c("intercept", "trend", "both"), lag=NULL)
+
+# Gráficas
+```{r echo = FALSE}
+
+plot(cbind(LDatos[, 2], DLDatos[, 2]), 
+     plot.type = "m", nc = 2,
+     col = c("darkgreen", "darkblue", "darkred", "orange", "purple"), 
+     main = "Comparacion de Series en Logaritmos y en Diferencias", 
+     xlab = "Tiempo")
+
+```
+
+### NIVELES: Tipo de cambio
+
+```{r}
+
+summary(ur.za(LDatos[, 2], model="both", lag = 5))
+
+summary(ur.za(LDatos[, 2], model="trend", lag = 5))
+
+summary(ur.za(LDatos[, 2], model="intercept", lag = 5))
+
+```
+
+### DIFERENCIAS: Tipo de cambio
+
+```{r}
+
+summary(ur.za(DLDatos[, 2], model="both", lag = 5))
+
+summary(ur.za(DLDatos[, 2], model="trend", lag = 5))
+
+summary(ur.za(DLDatos[, 2], model="intercept", lag = 5))
 
 ```
