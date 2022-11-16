@@ -63,7 +63,6 @@ head(Datos_Ad)
 
 Datos <- ts(Datos_Ad[7: 11], 
             start = c(2000, 1), 
-            end = c(2021, 7), 
             freq = 12)
 
 LDatos <- log(Datos)

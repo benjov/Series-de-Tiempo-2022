@@ -63,7 +63,6 @@ head(Datos_Ad)
 
 Datos <- ts(Datos_Ad[7: 11], 
             start = c(2000, 1), 
-            end = c(2021, 7), 
             freq = 12)
 
 LDatos <- log(Datos)
@@ -146,7 +145,6 @@ summary(CA_1)
 
 TT <- ts(c(1:259), 
          start = c(2000, 1), 
-         end = c(2021, 7), 
          freq = 12)
 
 ```
@@ -179,14 +177,6 @@ summary(ur.df(U, type = "none", lags = 5))
 
 ```
 
-```{r}
 
-summary(ur.df(DLDatos[, 5], type = "trend", lags = 4))
-
-summary(ur.df(DLDatos[, 5], type = "drift", lags = 4))
-
-summary(ur.df(DLDatos[, 5], type = "none", lags = 4))
-
-```
 
 
