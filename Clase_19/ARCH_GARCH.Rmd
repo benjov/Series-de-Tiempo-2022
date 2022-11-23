@@ -43,29 +43,29 @@ Para el análisis de temas financieros existe una librería de mucha utilidad ll
 
 options("getSymbols.warning4.0"=FALSE)
 
-AMZN <-getSymbols("AMZN", src = "yahoo", auto.assign = FALSE)
+BTC <-getSymbols("BTC-USD", src = "yahoo", auto.assign = FALSE)
 
-AMZN <- na.omit(AMZN)
+BTC <- na.omit(BTC)
 
-chartSeries(AMZN,TA='addBBands();
+chartSeries(BTC,TA='addBBands();
                     addBBands(draw="p");
                     addVo();
                     addMACD()', 
-                    subset='2021',
+                  #  subset='2021',
                 theme="white")
 
-head(AMZN)
+head(BTC)
 ```
 
 Para fines del ejercicio de esta clase, usaremos el valor de la acción ajustado. Esto nos servirá para calcular el rendimiento diario, o puesto en lenguaje de series temporales podemos decir que usaremos la serie en diferencias logarítmicas. 
 
 ```{r}
-plot(AMZN$AMZN.Adjusted)
+plot(BTC$`BTC-USD.Adjusted`)
 ```
 
 Una de las preguntas relevantes al observar la serie en diferencias, es si podríamos afirmar que esta serie cumple con el supuesto de homoscedasticidad. 
 ```{r}
-logret <- ts(diff(log(AMZN$AMZN.Adjusted))[-1])
+logret <- ts(diff(log(BTC$`BTC-USD.Adjusted`))[-1])
 
 plot(logret)
 ```
@@ -121,6 +121,7 @@ Como sabemos la distribución normal es un caso particular de la distribución t
 t.fit <-fitdistr(vector_ret, "t")
 round(t.fit$estimate, 6)
 
+#install.packages("metRology")
 library(metRology)
 alpha <- 0.05
 set.seed(1289)
@@ -202,7 +203,7 @@ library(rugarch)
 auto.arima(logret)
 
 model.spec = ugarchspec(variance.model = list(model = 'sGARCH' , garchOrder = c(1, 0)), 
-                        mean.model = list(armaOrder = c(0,0)), distribution.model = "std")
+                        mean.model = list(armaOrder = c(2,0)), distribution.model = "std")
 
 arch.fit = ugarchfit(spec = model.spec , data = logret, solver = 'solnp')
 
@@ -223,7 +224,7 @@ round(VaR,6)
 
 F_inv = qt(0.05, t.fit$estimate[3])
 
-tiempo= time(AMZN[-1])
+tiempo= time(BTC[-1])
 
 ggplot()+
   geom_point(aes(y = logret,x = tiempo),colour = 'lightgrey' , size = 2) + 
@@ -243,7 +244,7 @@ $\varepsilon$~$N(0,1)$
 
 ```{r}
 model.spec = ugarchspec(variance.model = list(model = 'sGARCH' , garchOrder = c(0,1)), 
-                        mean.model = list(armaOrder = c(0,2)), distribution.model = "std")
+                        mean.model = list(armaOrder = c(2,0)), distribution.model = "std")
 
 fit.garch.n = ugarchfit(spec = model.spec, data = logret, solver = "solnp")
 fit.garch.n@fit$matcoef
@@ -262,7 +263,7 @@ VaR
 
 F_inv = qt(0.05, t.fit$estimate[3])
 
-tiempo= time(AMZN[-1])
+tiempo= time(BTC[-1])
 
 ggplot()+
   geom_point(aes(y = logret,x = tiempo),colour = 'lightgrey' , size = 2) + 
@@ -298,8 +299,8 @@ Lag_Opt_GARCH(ehatsq,4,4)
 
 # Estimación de modelo óptimo 
 
-model.spec = ugarchspec(variance.model = list(model = 'sGARCH' , garchOrder = c(1,1)), 
-                        mean.model = list(armaOrder = c(0,2)), distribution.model = "std")
+model.spec = ugarchspec(variance.model = list(model = 'sGARCH' , garchOrder = c(4,2)), 
+                        mean.model = list(armaOrder = c(2,0)), distribution.model = "std")
 
 
 model.fit = ugarchfit(spec = model.spec , data = logret, solver = 'solnp')
@@ -322,7 +323,7 @@ VaR
 
 F_inv = qt(0.05, t.fit$estimate[3])
 
-tiempo= time(AMZN[-1])
+tiempo= time(BTC[-1])
 
 ggplot()+
   geom_point(aes(y = logret,x = tiempo),colour = 'lightgrey' , size = 2) + 
