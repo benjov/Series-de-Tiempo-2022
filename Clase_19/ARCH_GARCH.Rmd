@@ -1,7 +1,7 @@
 ---
 title: "Aplicacion ARCH(q) y GARCH(p,q)"
 author: "Benjamin Oliva & Omar Alfaro-Rivera"
-date: "25/11/2021"
+date: "23/11/2022"
 output: html_document
 ---
 
@@ -51,7 +51,8 @@ chartSeries(BTC,TA='addBBands();
                     addBBands(draw="p");
                     addVo();
                     addMACD()', 
-                  #  subset='2021',
+                  
+              subset='2021',
                 theme="white")
 
 head(BTC)
@@ -344,4 +345,26 @@ ggplot()+
   geom_hline(yintercept = sd(logret)*qnorm(0.05) , colour = 'darkgreen') + theme_light() + 
   labs(x = '' , y = 'Daily Returns' , title = 'Value at Risk Comparison')
 
+```
+
+
+### Forecasting with GARCH(1,1)
+
+Para realizar pronósticos con la estimación de un GARCH, utilizando la librería _rugarch_, es necesario utilizar la función __ugarchforecast()__. 
+
+```{r}
+model.spec = ugarchspec(variance.model = list(model = 'sGARCH' , garchOrder = c(1,1)), 
+                        mean.model = list(armaOrder = c(4,2)), distribution.model = "std")
+model.fit = ugarchfit(spec = model.spec , data = logret, solver = 'solnp')
+spec = getspec(model.fit)
+setfixed(spec) <- as.list(coef(model.fit))
+```
+
+Esta función precisa como argumentos nuestra estimación del modelo GARCH, con una modificación en la manera en que se presentan los coeficientes, realizada en la última línea del código anterior y que llamamos _spec_. _n.ahead_ es el número de periodos que vamos a pronosticar, _n.roll_ señala el número de pronósticos móviles que utilizaremos, en caso de que haya más información para realizar el pronóstico. Finalmente damos como input nuestro set de datos y como producto obtendremos el pronostico de Sigma tanto como de la serie.
+
+```{r}
+forecast = ugarchforecast(spec, n.ahead = 12, n.roll = 0, logret)
+sigma(forecast)
+fitted(forecast)
+forecast
 ```

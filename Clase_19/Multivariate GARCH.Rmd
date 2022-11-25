@@ -1,0 +1,128 @@
+---
+title: "Multivariate GARCH"
+author: "Benjamin Olvida & Omar Alfaro"
+date: "2022-11-24"
+output: html_document
+---
+
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+#install.packages("dynlm")
+#install.packages("moments")
+#install.packages("broom")
+#install.packages("FinTS")
+#install.packages('rugarch')
+#install.packages("tsbox")
+#install.packages("metRology")
+#install.packages("expm")
+#install.packages("MTS")
+#install.packages("rmgarch")
+#install.packages("Rcpp")
+library(expm)
+library(Matrix)
+library(ggplot2)
+library(quantmod)
+library(moments)
+library(dynlm)
+library(broom)
+library(FinTS)
+library(lubridate)
+library(forecast)
+library(readxl)
+library(MASS)
+library(rugarch)
+library(tsbox)
+library(MTS)
+library(rmgarch)
+library(Rcpp)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+options("getSymbols.warning4.0"=FALSE)
+
+
+BTC <-getSymbols("BTC-USD", src = "yahoo", auto.assign = FALSE)
+ETH <-getSymbols("ETH-USD", src = "yahoo", auto.assign = FALSE)
+BNB <-getSymbols("BNB-USD", src = "yahoo", auto.assign = FALSE)
+```
+
+```{r}
+
+chartSeries(BTC,TA='addBBands();
+                    addBBands(draw="p");
+                    addVo();
+                    addMACD()', 
+                  
+             # subset='2021',
+                theme="white")
+
+chartSeries(ETH,TA='addBBands();
+                    addBBands(draw="p");
+                    addVo();
+                    addMACD()', 
+                  
+             # subset='2021',
+                theme="white")
+
+chartSeries(BNB,TA='addBBands();
+                    addBBands(draw="p");
+                    addVo();
+                    addMACD()', 
+                  
+             # subset='2021',
+                theme="white")
+```
+
+```{r}
+ln_BTC <- diff(log(BTC$`BTC-USD.Adjusted`))
+ln_ETH <- diff(log(ETH$`ETH-USD.Adjusted`))
+ln_BNB <- diff(log(BNB$`BNB-USD.Adjusted`))
+```
+
+
+```{r }
+r_t=cbind(ln_BTC, ln_ETH, ln_BNB)
+
+
+returns = window(r_t, start = "2017-11-10")
+```
+
+```{r}
+xspec = ugarchspec(mean.model = list(armaOrder = c(1, 1)), variance.model = list(garchOrder = c(1,1), model = 'sGARCH'), distribution.model = 'norm')
+uspec = multispec(replicate(3, xspec))
+spec1 = dccspec(uspec = uspec, dccOrder = c(1, 1), distribution = 'mvnorm')
+spec1a = dccspec(uspec = uspec, dccOrder = c(1, 1), model='aDCC', distribution = 'mvnorm')
+```
+
+```{r}
+cl = makePSOCKcluster(3)
+multf = multifit(uspec, returns, cluster = cl)
+```
+
+```{r}
+fit1 = dccfit(spec1, data = returns, fit.control = list(eval.se = TRUE, scale = TRUE), fit = multf, cluster = cl)
+print(fit1)           
+
+```
+
+
+```{r}
+
+
+
+plot(fit1, which=1)
+plot(fit1, which=2)
+plot(fit1, which=3)
+plot(fit1, which=4)
+plot(fit1, which=5)
+
+
+```
