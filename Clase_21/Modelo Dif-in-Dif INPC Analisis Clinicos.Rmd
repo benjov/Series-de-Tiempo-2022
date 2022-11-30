@@ -37,7 +37,7 @@ options(scipen = 4)
 
 Los datos están en formato panel incluyen:
 
-* INPC (Indice Nacional de Precios al Consumidor (2QJul2018 = 100)) para los servicios de análisis clínicos
+* INPC (Indice Nacional de Precios al Consumidor (2QJul2018 = 100)) para un tipo de servicio
 Source: https://www.inegi.org.mx/programas/inpc/2018/#Tabulados
 
 * Dummy variable to indicate the time when the treatment started
